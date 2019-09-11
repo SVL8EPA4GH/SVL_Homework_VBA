@@ -1,0 +1,32 @@
+' Run same macro such as AddingStockVolume for all sheets in a workbook
+
+Sub RunMacroAllSheets()
+    Dim xSh As Worksheet
+    Application.ScreenUpdating = False
+    For Each xSh In Worksheets
+        xSh.Select
+        Call AddingStockVolume
+    Next
+    Application.ScreenUpdating = True
+End Sub
+
+' add volumes in column G for the same stock listed in column A and place the resuts in Column I and J
+
+Sub AddingStockVolume()
+Set Rng = Range("a:a")   ' change range to suit
+rw = 1
+For Each cel In Rng
+    If IsEmpty(cel) Then Exit For
+    If WorksheetFunction.CountIf(cel.Offset(-cel.Row + 1).Resize(cel.Row), cel) = 1 Then
+        tot = WorksheetFunction.SumIf(Rng, cel, Rng.Offset(, 6))
+        'If tot > 0 Then
+            Cells(rw, 9) = cel
+            Cells(rw, 10) = tot
+            rw = rw + 1
+        'End If
+    End If
+Next
+    Cells(1, 9).Value = "Ticker"
+    Cells(1, 10).Value = "Total Stock Volume"
+End Sub
+
